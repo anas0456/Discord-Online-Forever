@@ -3,28 +3,36 @@ const { joinVoiceChannel } = require('@discordjs/voice');
 
 const client = new Client();
 
-client.on('ready', async () => {
+client.on('ready', () => {
     console.log(`تم تسجيل الدخول بنجاح كـ ${client.user.tag}`);
     
+    // تعريف الروم
     const channelId = '1496674843184074945';
-    const channel = client.channels.cache.get(channelId);
-    
-    if (channel) {
-        try {
-            joinVoiceChannel({
-                channelId: channel.id,
-                guildId: channel.guild.id,
-                adapterCreator: channel.guild.voiceAdapterCreator,
-                selfDeaf: false,
-                selfMute: true
-            });
-            console.log("تم الانضمام للروم بنجاح!");
-        } catch (err) {
-            console.error("خطأ في الاتصال الصوتي:", err);
+
+    // دالة الانضمام (لتبسيط الكود)
+    const joinVoice = () => {
+        const channel = client.channels.cache.get(channelId);
+        if (channel) {
+            try {
+                joinVoiceChannel({
+                    channelId: channel.id,
+                    guildId: channel.guild.id,
+                    adapterCreator: channel.guild.voiceAdapterCreator,
+                    selfDeaf: false,
+                    selfMute: true
+                });
+                console.log("تم التأكد من الانضمام للروم!");
+            } catch (err) {
+                console.error("خطأ في الاتصال:", err);
+            }
         }
-    } else {
-        console.log("لم يتم العثور على الروم! تأكد من الـ ID.");
-    }
+    };
+
+    // المحاولة الأولى عند التشغيل
+    joinVoice();
+
+    // المراقبة: إعادة الاتصال كل 30 ثانية إذا خرج البوت
+    setInterval(joinVoice, 30000); 
 });
 
 client.login(process.env.token);
