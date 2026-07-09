@@ -20,11 +20,15 @@ client.on('ready', () => {
             selfMute: false // يجب أن تكون false ليظهر نشاط الصوت
         });
 
-        const player = createAudioPlayer();
-        const resource = createAudioResource(path.join(__dirname, 'noise.opus')); // ملف الصوت الخاص بك
+    const { StreamType } = require('@discordjs/voice'); // تأكد من إضافة هذا في الأعلى
 
-        player.play(resource);
-        connection.subscribe(player);
+// ... داخل الدالة ...
+const resource = createAudioResource(path.join(__dirname, 'noise.opus'), {
+    inputType: StreamType.OggOpus, // هذا هو الجزء الذي يخبر البوت ألا يستخدم FFmpeg
+});
+
+player.play(resource);
+connection.subscribe(player);
 
         // تكرار الصوت تلقائياً عند انتهائه
         player.on(AudioPlayerStatus.Idle, () => {
